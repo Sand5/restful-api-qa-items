@@ -149,6 +149,16 @@ public class ItemManagementSteps {
         given().contentType(ContentType.JSON).when().get(BASE_URL).then().extract().response();
 
     context.setResponse(response);
+
+    List<Map<String, Object>> items = response.jsonPath().getList("$");
+
+    logger.info("List of items returned ({} items):", items.size());
+
+    items.forEach(
+        item -> {
+          logger.info(
+              "- ID: {}, Name: {}, Data: {}", item.get("id"), item.get("name"), item.get("data"));
+        });
   }
 
   @When("the request to delete the item is made")
