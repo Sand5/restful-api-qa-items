@@ -3,27 +3,29 @@
 This project contains automated API tests for item management using **Java**, **Cucumber**, and **JUnit 5**. It includes hooks to print scenario execution details in real time.
 
 ## Project Structure
+```
 
 restful-api-qa-items/
 ├── src/
-│ ├── main/
-│ │ └── java/
-│ │ └── com/
-│ │ └── api/
-│ │ ├── model/ ← POJOs (e.g., ItemData.java, ItemRequest.java)
-│ │ └── utils/ ← Utilities and context classes (e.g., ApiTestContext.java, ConfigReader.java)
-│ └── test/
-│ ├── java/
-│ │ └── com/
-│ │ └── api/
-│ │ ├── steps/ ← Cucumber step definitions (e.g., ItemManagementSteps.java)
-│ │ ├── runners/ ← Test runners (e.g., RunCucumberTest.java)
-│ │ └── hooks/ ← Cucumber hooks (e.g., Hooks.java)
-│ └── resources/
-│ └── features/ ← Feature files (e.g., item_management.feature)
-├── pom.xml ← Maven configuration
-└── README.md ← Project documentation
+│   ├── main/
+│   │   └── java/
+│   │       └── com/
+│   │           └── api/
+│   │               ├── model/      ← POJOs (e.g., ItemData.java, ItemRequest.java)
+│   │               └── utils/      ← Utilities and context classes (e.g., ApiTestContext.java, ConfigReader.java)
+│   └── test/
+│       ├── java/
+│       │   └── com/
+│       │       └── api/
+│       │           ├── steps/      ← Cucumber step definitions (e.g., ItemManagementSteps.java)
+│       │           ├── runners/    ← Test runners (e.g., RunCucumberTest.java)
+│       │           └── hooks/      ← Cucumber hooks (e.g., Hooks.java)
+│       └── resources/
+│           └── features/           ← Feature files (e.g., item_management.feature)
+├── pom.xml                          ← Maven configuration
+└── README.md                        ← Project documentation
 
+```
 # Prerequisites
 
 - **Java 21** 
@@ -39,9 +41,6 @@ restful-api-qa-items/
 - **Cucumber PicoContainer** – for dependency injection in step definitions
 
 Dependencies are managed in `pom.xml`.
-
-
-# Running Tests
 
 # Run all tests
 mvn clean test
