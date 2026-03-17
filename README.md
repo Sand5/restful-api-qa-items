@@ -4,9 +4,9 @@ This project contains automated API tests for item management using **Java**, **
 
 # Restful API QA Items
 
-![CI](https://github.com/<your-username>/<your-repo>/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Sand5/restful-api-qa-items/actions/workflows/ci.yml/badge.svg)
 ![Java](https://img.shields.io/badge/java-21-blue)
-![Coverage](https://img.shields.io/codecov/c/github/Sand5/https://github.com/Sand5/restful-api-qa-items.svg)
+![Coverage](https://img.shields.io/codecov/c/github/Sand5/restful-api-qa-items.svg)
 
 Automated API tests for the Restful API using Cucumber, JUnit 5, and RestAssured.
 
