@@ -1,29 +1,30 @@
 package com.api.model;
 
 public class ItemData {
-  private String cpuModel;
-  private double price;
 
-  public ItemData() {}
+    private String cpuModel;
+    private double price;
 
-  public ItemData(String cpuModel, double price) {
-    this.cpuModel = cpuModel;
-    this.price = price;
-  }
+    public ItemData() {}
 
-  public String getCpuModel() {
-    return cpuModel;
-  }
+    public ItemData(String cpuModel, double price) {
+        this.cpuModel = cpuModel;
+        this.price = price;
+    }
 
-  public double getPrice() {
-    return price;
-  }
+    public String getCpuModel() {
+        return cpuModel;
+    }
 
-  public void setCpuModel(String cpuModel) {
-    this.cpuModel = cpuModel;
-  }
+    public double getPrice() {
+        return price;
+    }
 
-  public void setPrice(double price) {
-    this.price = price;
-  }
+    public void setCpuModel(String cpuModel) {
+        this.cpuModel = cpuModel;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }

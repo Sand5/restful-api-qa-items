@@ -2,6 +2,14 @@
 
 This project contains automated API tests for item management using **Java**, **Cucumber**, and **JUnit 5**. It includes hooks to print scenario execution details in real time.
 
+# Restful API QA Items
+
+![CI](https://github.com/<your-username>/<your-repo>/actions/workflows/ci.yml/badge.svg)
+![Java](https://img.shields.io/badge/java-21-blue)
+![Coverage](https://img.shields.io/codecov/c/github/Sand5/https://github.com/Sand5/restful-api-qa-items.svg)
+
+Automated API tests for the Restful API using Cucumber, JUnit 5, and RestAssured.
+
 ## Project Structure
 ```
 
@@ -12,19 +20,27 @@ restful-api-qa-items/
 │   │       └── com/
 │   │           └── api/
 │   │               ├── model/      ← POJOs (e.g., ItemData.java, ItemRequest.java)
-│   │               └── utils/      ← Utilities and context classes (e.g., ApiTestContext.java, ConfigReader.java)
+│   │               └── utils/      ← Utilities (e.g., ConfigReader.java)
 │   └── test/
 │       ├── java/
 │       │   └── com/
 │       │       └── api/
-│       │           ├── steps/      ← Cucumber step definitions (e.g., ItemManagementSteps.java)
+│       │           ├── steps/      ← Cucumber step definitions (e.g., ItemManagementSteps.java, Hooks.java)
 │       │           ├── runners/    ← Test runners (e.g., RunCucumberTest.java)
-│       │           └── hooks/      ← Cucumber hooks (e.g., Hooks.java)
+│       │           └── utils/      ← Test context (e.g., ApiTestContext.java)
 │       └── resources/
-│           └── features/           ← Feature files (e.g., item_management.feature)
+│           ├── config.properties   ← API configuration (base URL, API key)
+│           ├── features/           ← Feature files (e.g., item_management.feature)
+│           └── junit-platform.properties
+├── target/                         ← Build output
+│   ├── classes/                    ← Compiled main classes
+│   ├── test-classes/               ← Compiled test classes
+│   ├── cucumber-report.html        ← HTML test report
+│   ├── cucumber-report.json        ← JSON test report
+│   ├── surefire-reports/           ← Surefire test run results (XML + TXT)
+│   └── generated-sources/          ← Generated source files
 ├── pom.xml                          ← Maven configuration
 └── README.md                        ← Project documentation
-
 ```
 # Prerequisites
 

@@ -24,6 +24,7 @@ public class ItemManagementSteps {
 
   private static final Logger logger = LoggerFactory.getLogger(ItemManagementSteps.class);
   private static final String BASE_URL = ConfigReader.get("base.url");
+  private static final String API_KEY = ConfigReader.get("api.key");
 
   private final ApiTestContext context;
 
@@ -49,6 +50,7 @@ public class ItemManagementSteps {
     Response response =
         given()
             .contentType(ContentType.JSON)
+            .header("x-api-key", API_KEY)
             .body(request)
             .when()
             .post(BASE_URL)
@@ -64,7 +66,6 @@ public class ItemManagementSteps {
 
     context.setResponse(response);
     context.setObjectId(id);
-    context.setItemName(name);
   }
 
   @Given("multiple items exist")
@@ -83,6 +84,7 @@ public class ItemManagementSteps {
       Response response =
           given()
               .contentType(ContentType.JSON)
+              .header("x-api-key", API_KEY)
               .body(request)
               .when()
               .post(BASE_URL)
@@ -109,6 +111,7 @@ public class ItemManagementSteps {
     Response response =
         given()
             .contentType(ContentType.JSON)
+            .header("x-api-key", API_KEY)
             .body(request)
             .when()
             .post(BASE_URL)
@@ -132,6 +135,7 @@ public class ItemManagementSteps {
     Response response =
         given()
             .contentType(ContentType.JSON)
+            .header("x-api-key", API_KEY)
             .when()
             .get(BASE_URL + "/" + id)
             .then()
@@ -146,7 +150,7 @@ public class ItemManagementSteps {
     logger.info("Making GET request to list all items");
 
     Response response =
-        given().contentType(ContentType.JSON).when().get(BASE_URL).then().extract().response();
+        given().contentType(ContentType.JSON).header("x-api-key", API_KEY).when().get(BASE_URL).then().extract().response();
 
     context.setResponse(response);
 
@@ -168,13 +172,14 @@ public class ItemManagementSteps {
 
     Response response =
         given()
-            .contentType(ContentType.JSON)
+            .header("x-api-key", API_KEY)
             .when()
             .delete(BASE_URL + "/" + id)
             .then()
             .extract()
             .response();
 
+    logger.info("DELETE response code: {}", response.statusCode());
     context.setResponse(response);
   }
 
@@ -198,6 +203,7 @@ public class ItemManagementSteps {
     Response response =
         given()
             .contentType(ContentType.JSON)
+            .header("x-api-key", API_KEY)
             .when()
             .get(BASE_URL + "/" + id)
             .then()
@@ -225,7 +231,6 @@ public class ItemManagementSteps {
   public void theItemWithNameNoLongerExists(String name) {
     String id = context.getObjectId();
     logger.info("Verifying item with id {} and name '{}' no longer exists", id, name);
-
-    given().contentType(ContentType.JSON).when().get(BASE_URL + "/" + id).then().statusCode(404);
+    given().header("x-api-key", API_KEY).when().get(BASE_URL + "/" + id).then().statusCode(404);
   }
 }
