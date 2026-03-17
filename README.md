@@ -1,14 +1,22 @@
-# restful-api-qa-items
+# Rest Assured API Test Demo
 
-This project contains automated API tests for item management using **Java**, **Cucumber**, and **JUnit 5**. It includes hooks to print scenario execution details in real time.
+This project contains automated API tests for item management using **Java**, **Cucumber**,**RestAssured** and **JUnit 5**. It includes hooks to print scenario execution details in real time.
 
-# Restful API QA Items
+## Badges
 
 ![CI](https://github.com/Sand5/restful-api-qa-items/actions/workflows/ci.yml/badge.svg)
 ![Java](https://img.shields.io/badge/java-21-blue)
-![Coverage](https://img.shields.io/codecov/c/github/Sand5/restful-api-qa-items.svg)
 
-Automated API tests for the Restful API using Cucumber, JUnit 5, and RestAssured.
+---
+
+## Test Reports
+
+After running the CI workflow, test reports are available as artifacts:
+
+- **Surefire Reports:** `target/surefire-reports`
+- **Cucumber Reports:** `target/cucumber-report.html`
+
+You can download them from the **Actions → build → Artifacts** section on GitHub.
 
 ## Project Structure
 ```
