@@ -21,10 +21,17 @@ public class ConfigReader {
   }
 
   public static String get(String key) {
+    // Check environment variable (Docker friendly)
+    String envVar = System.getenv(key.toUpperCase().replace(".", "_"));
+    if (envVar != null) {
+      return envVar;
+    }
+    // Check system property (-Dkey=value)
     String sysProp = System.getProperty(key);
     if (sysProp != null) {
       return sysProp;
     }
+    // Fallback to properties file
     return properties.getProperty(key);
   }
 }
