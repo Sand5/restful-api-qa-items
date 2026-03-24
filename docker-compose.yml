@@ -1,0 +1,32 @@
+services:
+  qa-tests-smoke:
+    build: .
+    container_name: restful-api-qa-items-smoke
+    environment:
+      - THREAD_COUNT=2
+      - CUCUMBER_TAGS=@smoke
+    command: sh -c "mvn clean test \
+      -Dcucumber.filter.tags=${CUCUMBER_TAGS:-@smoke} \
+      -Dparallel=scenarios \
+      -DthreadCount=${THREAD_COUNT:-2} \
+      -DperCoreThreadCount=false"
+    volumes:
+      - .:/app
+      - ./reports:/app/reports  # write reports here, NOT target
+    restart: "no"
+
+  qa-tests-regression:
+    build: .
+    container_name: restful-api-qa-items-regression
+    environment:
+      - THREAD_COUNT=2
+      - CUCUMBER_TAGS=@regression
+    command: sh -c "mvn clean test \
+      -Dcucumber.filter.tags=${CUCUMBER_TAGS:-@regression} \
+      -Dparallel=scenarios \
+      -DthreadCount=${THREAD_COUNT:-2} \
+      -DperCoreThreadCount=false"
+    volumes:
+      - .:/app
+      - ./reports:/app/reports
+    restart: "no"

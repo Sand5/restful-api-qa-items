@@ -49,8 +49,11 @@ restful-api-qa-items/
 │   ├── cucumber-report.json        ← JSON test report
 │   ├── surefire-reports/           ← Surefire test run results (XML + TXT)
 │   └── generated-sources/          ← Generated source files
-├── pom.xml                          ← Maven configuration
-└── README.md                        ← Project documentation
+├── Dockerfile                      ← Container definition for building/running the project
+├── docker-compose.yml              ← Docker Compose for running smoke/regression tests in parallel
+├── .dockerignore                   ← Files and folders to exclude from Docker build
+├── pom.xml                         ← Maven configuration
+└── README.md                       ← Project documentation
 ```
 ## Prerequisites
 
@@ -132,9 +135,69 @@ docker run --rm \
 -e API_KEY="12345abcdef" \
 rest-api-tests
 
+### Parallel Test Execution with Docker Compose using Tags
+
+We use Docker Compose to demonstrate **parallel execution of Cucumber scenarios filtered by tags**.
+
+### Running the Demo with Docker Compose 
+
+1. Build and start containers:
+docker-compose up --build
+
+### Override threads or tags at runtime with Docker Compose:
+
+### Key Commands:
+
+| Purpose | Command |
+|---------|---------|
+| Run default Compose setup | `docker-compose up --build` |
+| Override thread count | `THREAD_COUNT=4 docker-compose up --build` |
+| Override tag | `CUCUMBER_TAGS=@regression docker-compose up --build` |
+| Override both | `THREAD_COUNT=3 CUCUMBER_TAGS=@smoke docker-compose up --build` |
+| View logs of a container | `docker logs restful-api-qa-items-smoke -f` |
+
+Benefits
+
+- Faster test execution
+
+- Scenarios run concurrently in threads and containers
+
+- Reduces total runtime for larger test suites
+
+- Environment isolation
+
+- Each container is self-contained
+- Prevents conflicts from shared test state or APIs
+
+- Flexible configuration
+
+- Thread count and tags configurable per container via environment variables
+
+- No changes needed in pom.xml for temporary overrides
+
+- Reproducibility and consistency Docker ensures consistent environments across machines
+
+## Note for Windows Users
+```text
+If you are using **Windows-native containers**, `sh -c` will **not work** because `sh` is not available. In that case use **CMD** or **PowerShell** for command execution.
+- Example using CMD syntax: cmd /S /C "mvn clean test -Dcucumber.filter.tags=%CUCUMBER_TAGS% -Dparallel=scenarios -DthreadCount=%THREAD_COUNT% -DperCoreThreadCount=false"
+- Example using PowerShell syntax: powershell -Command "mvn clean test -Dcucumber.filter.tags=$$env:CUCUMBER_TAGS -Dparallel=scenarios -DthreadCount=$env:THREAD_COUNT -DperCoreThreadCount=false"
+
+or example override:
+PowerShell example:$env:THREAD_COUNT=4
+$env:CUCUMBER_TAGS="@smoke"
+docker-compose up --build
+
+CMD example override:
+set THREAD_COUNT=4
+set CUCUMBER_TAGS=@smoke
+docker-compose up --build
+```
+
 Environment variables take priority over system properties and config.properties.
 This is ideal for CI/CD pipelines or running tests in different environments without changing code.
-### Export Test Reports
+
+### Export Test Reports from Dockerfile run
 
 By default, test reports are generated inside the container. To save them locally, mount a volume:
 docker run --rm \
@@ -146,6 +209,17 @@ After execution, reports will be available in ./reports/ and include:
 cucumber-report.html
 cucumber-report.json
 surefire-reports/
+
+### Export Test Reports from Docker Compose run
+After the tests complete, the reports are inside the containers. Copy them to your local reports folder
+
+#### Smoke reports
+docker cp restful-api-qa-items-smoke:/app/target/cucumber-report.html ./reports/cucumber-report-smoke.html
+docker cp restful-api-qa-items-smoke:/app/target/cucumber-report.json ./reports/cucumber-report-smoke.json
+
+#### Regression reports
+docker cp restful-api-qa-items-regression:/app/target/cucumber-report.html ./reports/cucumber-report-regression.html
+docker cp restful-api-qa-items-regression:/app/target/cucumber-report.json ./reports/cucumber-report-regression.json
 
 ### Notes
 The Docker image uses Maven 3.9 and Java 21 (Eclipse Temurin)

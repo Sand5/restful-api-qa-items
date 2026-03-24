@@ -123,6 +123,10 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <parallel>scenarios</parallel>          <!-- run test scenarios in parallel -->
+                    <threadCount>4</threadCount>         <!-- number of parallel threads -->
+                    <perCoreThreadCount>false</perCoreThreadCount>
+                    <forkCount>4</forkCount>
                     <systemPropertyVariables>
                         <cucumber.features>src/test/resources/features</cucumber.features>
                     </systemPropertyVariables>

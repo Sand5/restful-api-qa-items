@@ -1,0 +1,29 @@
+# Maven build output
+target/
+
+# Logs
+*.log
+
+# IntelliJ files
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+
+# Test reports
+cucumber-report.html
+cucumber-report.json
+surefire-reports/
+
+# Misc
+*.tmp
+*.swp
