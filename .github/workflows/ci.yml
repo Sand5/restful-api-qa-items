@@ -35,7 +35,11 @@ jobs:
             -e CUCUMBER_TAGS="@smoke" \
             -e THREAD_COUNT=2 \
             -v $PWD/target:/app/target \
-            rest-api-tests
+            rest-api-tests mvn clean test \
+              -Dcucumber.filter.tags=${CUCUMBER_TAGS} \
+              -Dparallel=scenarios \
+              -DthreadCount=${THREAD_COUNT} \
+              -DperCoreThreadCount=false
 
       # 5. Upload Surefire & Cucumber reports
       - name: Upload Test Reports
