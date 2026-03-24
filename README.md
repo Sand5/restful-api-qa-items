@@ -4,11 +4,14 @@ This project contains automated API tests for item management using **Java**, **
 
 ## Badges
 
-## Badges
-
 ![CI](https://github.com/Sand5/restful-api-qa-items/actions/workflows/ci.yml/badge.svg)
 ![Java](https://img.shields.io/badge/java-21-blue)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?logo=apachemaven&logoColor=white)
+![Cucumber](https://img.shields.io/badge/Cucumber-BDD-23D96C?logo=cucumber&logoColor=white)
+![API Testing](https://img.shields.io/badge/API-Testing-orange)
 ![Docker](https://img.shields.io/badge/docker-ready-2496ed?logo=docker&logoColor=white)
+![Parallel Tests](https://img.shields.io/badge/Tests-Parallel-green)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI-2088FF?logo=githubactions&logoColor=white)
 ---
 
 ## Test Reports
