@@ -28,18 +28,21 @@ jobs:
       - name: Build Docker image
         run: docker build -t rest-api-tests .
 
-      # 4. Run smoke tests inside Docker
+      # 4. Run smoke tests inside Docker with reports bind-mounted
       - name: Run smoke tests in Docker
         run: |
+          mkdir -p reports
           docker run --rm \
             -e CUCUMBER_TAGS="@smoke" \
             -e THREAD_COUNT=2 \
-            -v $PWD/target:/app/target \
-            rest-api-tests mvn clean test \
-              -Dcucumber.filter.tags=${CUCUMBER_TAGS} \
-              -Dparallel=scenarios \
-              -DthreadCount=${THREAD_COUNT} \
-              -DperCoreThreadCount=false
+            -v $PWD/reports:/app/reports \
+            rest-api-tests \
+            sh -c "mvn clean test \
+                   -Dcucumber.filter.tags=${CUCUMBER_TAGS} \
+                   -Dparallel=scenarios \
+                   -DthreadCount=${THREAD_COUNT} \
+                   -DperCoreThreadCount=false \
+                   -Dcucumber.plugin=html:reports/cucumber-report.html,json:reports/cucumber-report.json"
 
       # 5. Upload Surefire & Cucumber reports
       - name: Upload Test Reports
@@ -47,6 +50,6 @@ jobs:
         with:
           name: smoke-test-reports
           path: |
+            reports/cucumber-report.html
+            reports/cucumber-report.json
             target/surefire-reports
-            target/cucumber-report.html
-            target/cucumber-report.json
