@@ -1,31 +1,37 @@
+version: "3.9"
+
 services:
+  # Smoke tests
   qa-tests-smoke:
     build: .
     container_name: restful-api-qa-items-smoke
     environment:
-      - THREAD_COUNT=2
-      - CUCUMBER_TAGS=@smoke
-    command: sh -c "mvn clean test \
-      -Dcucumber.filter.tags=${CUCUMBER_TAGS:-@smoke} \
-      -Dparallel=scenarios \
-      -DthreadCount=${THREAD_COUNT:-2} \
-      -DperCoreThreadCount=false"
+      THREAD_COUNT: 2
+      CUCUMBER_TAGS: "@smoke"
+    command: >
+      sh -c "mvn clean test
+        -Dcucumber.filter.tags=$CUCUMBER_TAGS
+        -Dparallel=scenarios
+        -DthreadCount=$THREAD_COUNT
+        -DperCoreThreadCount=false"
     volumes:
       - .:/app
-      - ./reports:/app/reports  # write reports here, NOT target
+      - ./reports:/app/reports   # collect reports here
     restart: "no"
 
+  # Regression tests
   qa-tests-regression:
     build: .
     container_name: restful-api-qa-items-regression
     environment:
-      - THREAD_COUNT=2
-      - CUCUMBER_TAGS=@regression
-    command: sh -c "mvn clean test \
-      -Dcucumber.filter.tags=${CUCUMBER_TAGS:-@regression} \
-      -Dparallel=scenarios \
-      -DthreadCount=${THREAD_COUNT:-2} \
-      -DperCoreThreadCount=false"
+      THREAD_COUNT: 2
+      CUCUMBER_TAGS: "@regression"
+    command: >
+      sh -c "mvn clean test
+        -Dcucumber.filter.tags=$CUCUMBER_TAGS
+        -Dparallel=scenarios
+        -DthreadCount=$THREAD_COUNT
+        -DperCoreThreadCount=false"
     volumes:
       - .:/app
       - ./reports:/app/reports
