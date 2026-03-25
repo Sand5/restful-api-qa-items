@@ -37,7 +37,6 @@ restful-api-qa-items/
 │   └── test/
 │       ├── java/
 │       │   └── com/
-│       │       └── api/
 │       │           ├── steps/      ← Cucumber step definitions (e.g., ItemManagementSteps.java, Hooks.java)
 │       │           ├── runners/    ← Test runners (e.g., RunCucumberTest.java)
 │       │           └── utils/      ← Test context (e.g., ApiTestContext.java)
@@ -52,6 +51,9 @@ restful-api-qa-items/
 │   ├── cucumber-report.json        ← JSON test report
 │   ├── surefire-reports/           ← Surefire test run results (XML + TXT)
 │   └── generated-sources/          ← Generated source files
+├── .github/
+│   └── workflows/
+│       └── ci.yml                  ← GitHub Actions CI workflow
 ├── Dockerfile                      ← Container definition for building/running the project
 ├── docker-compose.yml              ← Docker Compose for running smoke/regression tests in parallel
 ├── .dockerignore                   ← Files and folders to exclude from Docker build
