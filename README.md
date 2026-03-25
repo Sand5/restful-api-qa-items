@@ -32,14 +32,23 @@ restful-api-qa-items/
 │   │   └── java/
 │   │       └── com/
 │   │           └── api/
-│   │               ├── model/      ← POJOs (e.g., ItemData.java, ItemRequest.java)
-│   │               └── utils/      ← Utilities (e.g., ConfigReader.java)
+│   │               ├── model/      ← POJOs / DTOs / Records (immutable data holders)
+│   │               │   ├── ItemData.java       ← Record / DTO
+│   │               │   └── ItemRequest.java    ← Record / DTO
+│   │               └── utils/      ← Utilities / helpers for main code
+│   │                   └── ConfigReader.java
 │   └── test/
 │       ├── java/
 │       │   └── com/
-│       │           ├── steps/      ← Cucumber step definitions (e.g., ItemManagementSteps.java, Hooks.java)
-│       │           ├── runners/    ← Test runners (e.g., RunCucumberTest.java)
-│       │           └── utils/      ← Test context (e.g., ApiTestContext.java)
+│       │       └── api/
+│       │           ├── steps/      ← Cucumber step definitions (behavior classes)
+│       │           │   └── ItemManagementSteps.java
+│       │           ├── hooks/      ← Cucumber lifecycle hooks (@Before, @After)
+│       │           │   └── Hooks.java
+│       │           ├── runners/    ← Test runners for Cucumber
+│       │           │   └── RunCucumberTest.java
+│       │           └── utils/      ← Test helpers / context
+│       │               └── ApiTestContext.java
 │       └── resources/
 │           ├── config.properties   ← API configuration (base URL, API key)
 │           ├── features/           ← Feature files (e.g., item_management.feature)

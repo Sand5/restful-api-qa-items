@@ -26,10 +26,10 @@ public class ItemManagementSteps {
   private static final String BASE_URL = ConfigReader.get("base.url");
   private static final String API_KEY = ConfigReader.get("api.key");
 
-  private final ApiTestContext context;
+  private final ApiTestContext apiTestContext;
 
-  public ItemManagementSteps(ApiTestContext context) {
-    this.context = context;
+  public ItemManagementSteps(ApiTestContext apiTestContext) {
+    this.apiTestContext = apiTestContext;
   }
 
   // -------------------------
@@ -37,15 +37,15 @@ public class ItemManagementSteps {
   // -------------------------
 
   @Given("an item exists with name {string}, CPU model {string}, and price {double}")
-  public void anItemExistsWithNameCpuModelAndPrice(String name, String cpuModel, double price) {
-    logger.info("Creating item with name: {}, CPU model: {}, price: {}", name, cpuModel, price);
+  public void anItemExistsWithNameCpuModelAndPrice(String itemName, String cpuModel, double price) {
+    logger.info("Creating item with name: {}, CPU model: {}, price: {}", itemName, cpuModel, price);
 
-    context.setItemName(name);
-    context.setCpuModel(cpuModel);
-    context.setPrice(price);
+    apiTestContext.setItemName(itemName);
+    apiTestContext.setCpuModel(cpuModel);
+    apiTestContext.setPrice(price);
 
-    ItemData data = new ItemData(cpuModel, price);
-    ItemRequest request = new ItemRequest(name, data);
+    ItemData itemData = new ItemData(cpuModel, price);
+    ItemRequest request = new ItemRequest(itemName, itemData);
 
     Response response =
         given()
@@ -64,8 +64,8 @@ public class ItemManagementSteps {
     logger.info("Item created with ID: {}", id);
     logger.debug("Response body: {}", response.asString());
 
-    context.setResponse(response);
-    context.setObjectId(id);
+    apiTestContext.setResponse(response);
+    apiTestContext.setObjectId(id);
   }
 
   @Given("multiple items exist")
@@ -103,10 +103,10 @@ public class ItemManagementSteps {
 
   @When("the request to add the item is made")
   public void theRequestToAddTheItemIsMade() {
-    ItemData data = new ItemData(context.getCpuModel(), context.getPrice());
-    ItemRequest request = new ItemRequest(context.getItemName(), data);
+    ItemData data = new ItemData(apiTestContext.getCpuModel(), apiTestContext.getPrice());
+    ItemRequest request = new ItemRequest(apiTestContext.getItemName(), data);
 
-    logger.info("Making POST request to add item: {}", context.getItemName());
+    logger.info("Making POST request to add item: {}", apiTestContext.getItemName());
 
     Response response =
         given()
@@ -123,13 +123,13 @@ public class ItemManagementSteps {
     String id = response.jsonPath().getString("id");
     logger.info("Item created with id: {}", id);
 
-    context.setResponse(response);
-    context.setObjectId(id);
+    apiTestContext.setResponse(response);
+    apiTestContext.setObjectId(id);
   }
 
   @When("the request to get the item by id is made")
   public void theRequestToGetTheItemByIdIsMade() {
-    String id = context.getObjectId();
+    String id = apiTestContext.getObjectId();
     logger.info("Making GET request to fetch item by id: {}", id);
 
     Response response =
@@ -142,7 +142,7 @@ public class ItemManagementSteps {
             .extract()
             .response();
 
-    context.setResponse(response);
+    apiTestContext.setResponse(response);
   }
 
   @When("the request to list all items is made")
@@ -152,7 +152,7 @@ public class ItemManagementSteps {
     Response response =
         given().contentType(ContentType.JSON).header("x-api-key", API_KEY).when().get(BASE_URL).then().extract().response();
 
-    context.setResponse(response);
+    apiTestContext.setResponse(response);
 
     List<Map<String, Object>> items = response.jsonPath().getList("$");
 
@@ -167,7 +167,7 @@ public class ItemManagementSteps {
 
   @When("the request to delete the item is made")
   public void theRequestToDeleteTheItemIsMade() {
-    String id = context.getObjectId();
+    String id = apiTestContext.getObjectId();
     logger.info("Making DELETE request to remove item with id: {}", id);
 
     Response response =
@@ -180,7 +180,7 @@ public class ItemManagementSteps {
             .response();
 
     logger.info("DELETE response code: {}", response.statusCode());
-    context.setResponse(response);
+    apiTestContext.setResponse(response);
   }
 
   // -------------------------
@@ -190,14 +190,14 @@ public class ItemManagementSteps {
   @Then("a {int} response code is returned")
   public void aResponseCodeIsReturned(int expectedStatusCode) {
     logger.info("Verifying response code: {}", expectedStatusCode);
-    context.getResponse().then().statusCode(expectedStatusCode);
+    apiTestContext.getResponse().then().statusCode(expectedStatusCode);
   }
 
   @Then("the item with name {string} is created")
   public void theItemWithNameIsCreated(String expectedName) {
     logger.info("Verifying item '{}' was successfully created", expectedName);
 
-    String id = context.getObjectId();
+    String id = apiTestContext.getObjectId();
     logger.info("Fetching item by ID {} to verify creation", id);
 
     Response response =
@@ -212,24 +212,24 @@ public class ItemManagementSteps {
             .extract()
             .response();
 
-    context.setResponse(response);
+    apiTestContext.setResponse(response);
   }
 
   @Then("the response contains the item with name {string}")
   public void theResponseContainsTheItemWithName(String expectedName) {
     logger.info("Verifying response contains item with name: {}", expectedName);
-    context.getResponse().then().body("name", equalTo(expectedName));
+    apiTestContext.getResponse().then().body("name", equalTo(expectedName));
   }
 
   @Then("the response contains multiple items")
   public void theResponseContainsMultipleItems() {
     logger.info("Verifying response contains multiple items");
-    context.getResponse().then().body("size()", greaterThan(1));
+    apiTestContext.getResponse().then().body("size()", greaterThan(1));
   }
 
   @Then("the item with name {string} no longer exists")
   public void theItemWithNameNoLongerExists(String name) {
-    String id = context.getObjectId();
+    String id = apiTestContext.getObjectId();
     logger.info("Verifying item with id {} and name '{}' no longer exists", id, name);
     given().header("x-api-key", API_KEY).when().get(BASE_URL + "/" + id).then().statusCode(404);
   }
