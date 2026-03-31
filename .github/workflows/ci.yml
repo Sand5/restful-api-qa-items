@@ -38,11 +38,11 @@ jobs:
             -v $PWD/reports:/app/reports \
             rest-api-tests \
             sh -c "mvn clean test \
-                   -Dcucumber.filter.tags=${CUCUMBER_TAGS} \
-                   -Dparallel=scenarios \
-                   -DthreadCount=${THREAD_COUNT} \
-                   -DperCoreThreadCount=false \
-                   -Dcucumber.plugin=html:reports/cucumber-report.html,json:reports/cucumber-report.json"
+                  -Dcucumber.filter.tags=\$CUCUMBER_TAGS \
+                  -Dparallel=scenarios \
+                  -DthreadCount=\$THREAD_COUNT \
+                  -DperCoreThreadCount=false \
+                  -Dcucumber.plugin=html:reports/cucumber-report.html,json:reports/cucumber-report.json"
 
       # 5. Upload Surefire & Cucumber reports
       - name: Upload Test Reports
