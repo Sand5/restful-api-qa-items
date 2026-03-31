@@ -1,7 +1,6 @@
-# Rest Assured API Test Demo
+# RESTful API Test Automation Project
 
-This project contains automated API tests for item management using **Java**, **Cucumber**,**RestAssured** and **JUnit 5**. It includes hooks to print scenario execution details in real time.
-
+Designed and implemented a robust, maintainable API test automation framework in **Java** using **Cucumber**, **RestAssured**,**Junit 5** and **Maven**. The framework features a layered architecture with builder, endpoints, service, and steps layers, promoting separation of concerns and reusability. Implemented context management with ApiTestContext to isolate scenarios, along with Hooks for lifecycle handling, safe cleanup, and detailed logging using SLF4J. Test coverage includes CRUD operations, multiple scenarios per feature, and assertions for both positive and negative outcomes. Integrated data-driven testing with Cucumber DataTables and ensured resilience with safe delete and error handling. The project is CI-ready, containerized with Docker, and structured for scalability to other API endpoints.API service can be located at https://restful-api.dev/
 ## Badges
 
 ![CI](https://github.com/Sand5/restful-api-qa-items/actions/workflows/ci.yml/badge.svg)
@@ -32,42 +31,50 @@ restful-api-qa-items/
 │   │   └── java/
 │   │       └── com/
 │   │           └── api/
-│   │               ├── model/      ← POJOs / DTOs / Records (immutable data holders)
-│   │               │   ├── ItemData.java       ← Record / DTO
-│   │               │   └── ItemRequest.java    ← Record / DTO
-│   │               └── utils/      ← Utilities / helpers for main code
+│   │               └── utils/       ← Main utilities / helpers
 │   │                   └── ConfigReader.java
+│   │               └── model/       ← Could also be shared DTOs if needed in main
+│   │                   ├── ItemData.java
+│   │                   └── ItemRequest.java
 │   └── test/
 │       ├── java/
 │       │   └── com/
 │       │       └── api/
-│       │           ├── steps/      ← Cucumber step definitions (behavior classes)
+│       │           ├── builder/     ← Test builders for requests
+│       │           │   └── ItemRequestBuilder.java
+│       │           ├── client/      ← Optional low-level HTTP wrappers
+│       │           ├── endpoints/   ← API classes (ItemApi)
+│       │           │   └── ItemApi.java
+│       │           ├── service/     ← Service layer wrapping API calls
+│       │           │   └── ItemService.java
+│       │           ├── steps/       ← Cucumber step definitions
 │       │           │   └── ItemManagementSteps.java
-│       │           ├── hooks/      ← Cucumber lifecycle hooks (@Before, @After)
+│       │           ├── hooks/       ← Lifecycle hooks (@Before, @After)
 │       │           │   └── Hooks.java
-│       │           ├── runners/    ← Test runners for Cucumber
+│       │           ├── runners/     ← Test runners for Cucumber
 │       │           │   └── RunCucumberTest.java
-│       │           └── utils/      ← Test helpers / context
+│       │           └── utils/       ← Test helpers / context
 │       │               └── ApiTestContext.java
 │       └── resources/
-│           ├── config.properties   ← API configuration (base URL, API key)
-│           ├── features/           ← Feature files (e.g., item_management.feature)
+│           ├── config.properties
+│           ├── features/
+│           │   └── item_management.feature
 │           └── junit-platform.properties
-├── target/                         ← Build output
-│   ├── classes/                    ← Compiled main classes
-│   ├── test-classes/               ← Compiled test classes
-│   ├── cucumber-report.html        ← HTML test report
-│   ├── cucumber-report.json        ← JSON test report
-│   ├── surefire-reports/           ← Surefire test run results (XML + TXT)
-│   └── generated-sources/          ← Generated source files
+├── target/
+│   ├── classes/
+│   ├── test-classes/
+│   ├── cucumber-report.html
+│   ├── cucumber-report.json
+│   ├── surefire-reports/
+│   └── generated-sources/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                  ← GitHub Actions CI workflow
-├── Dockerfile                      ← Container definition for building/running the project
-├── docker-compose.yml              ← Docker Compose for running smoke/regression tests in parallel
-├── .dockerignore                   ← Files and folders to exclude from Docker build
-├── pom.xml                         ← Maven configuration
-└── README.md                       ← Project documentation
+│       └── ci.yml
+├── Dockerfile
+├── docker-compose.yml
+├── .dockerignore
+├── pom.xml
+└── README.md
 ```
 ## Prerequisites
 

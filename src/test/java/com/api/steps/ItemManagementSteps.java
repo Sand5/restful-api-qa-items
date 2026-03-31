@@ -1,14 +1,14 @@
 package com.api.steps;
 
-import com.api.model.ItemData;
+import com.api.builder.ItemRequestBuilder;
+import com.api.endpoints.ItemApi;
 import com.api.model.ItemRequest;
+import com.api.service.ItemService;
 import com.api.utils.ApiTestContext;
-import com.api.utils.ConfigReader;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -16,84 +16,64 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
 public class ItemManagementSteps {
 
   private static final Logger logger = LoggerFactory.getLogger(ItemManagementSteps.class);
-  private static final String BASE_URL = ConfigReader.get("base.url");
-  private static final String API_KEY = ConfigReader.get("api.key");
-
   private final ApiTestContext apiTestContext;
+  private final ItemService itemService;
 
   public ItemManagementSteps(ApiTestContext apiTestContext) {
     this.apiTestContext = apiTestContext;
+    // Pass a new ItemApi to ItemService
+    this.itemService = new ItemService(new ItemApi());
   }
 
   // -------------------------
   // GIVEN STEPS
   // -------------------------
-
   @Given("an item exists with name {string}, CPU model {string}, and price {double}")
   public void anItemExistsWithNameCpuModelAndPrice(String itemName, String cpuModel, double price) {
     logger.info("Creating item with name: {}, CPU model: {}, price: {}", itemName, cpuModel, price);
 
+    // Save values to api test context
     apiTestContext.setItemName(itemName);
     apiTestContext.setCpuModel(cpuModel);
     apiTestContext.setPrice(price);
 
-    ItemData itemData = new ItemData(cpuModel, price);
-    ItemRequest request = new ItemRequest(itemName, itemData);
+    // Use builder to create ItemRequest
+    ItemRequest request =
+        new ItemRequestBuilder().withName(itemName).withCpuModel(cpuModel).withPrice(price).build();
 
-    Response response =
-        given()
-            .contentType(ContentType.JSON)
-            .header("x-api-key", API_KEY)
-            .body(request)
-            .when()
-            .post(BASE_URL)
-            .then()
-            .statusCode(200)
-            .extract()
-            .response();
-
+    // Call service to create item
+    Response response = itemService.createItem(request);
     String id = response.jsonPath().getString("id");
-
     logger.info("Item created with ID: {}", id);
-    logger.debug("Response body: {}", response.asString());
 
+    // Save response and objectId in the test context
     apiTestContext.setResponse(response);
     apiTestContext.setObjectId(id);
   }
 
   @Given("multiple items exist")
   public void multipleItemsExist(@NotNull DataTable dataTable) {
-    List<Map<String, String>> items = dataTable.asMaps();
+    var items = dataTable.asMaps(String.class, String.class);
     logger.info("Creating multiple items for test setup");
 
-    for (Map<String, String> item : items) {
+    for (var item : items) {
       String name = item.get("name");
       String cpuModel = item.get("cpuModel");
       double price = Double.parseDouble(item.get("price"));
 
-      ItemData data = new ItemData(cpuModel, price);
-      ItemRequest request = new ItemRequest(name, data);
+      ItemRequest request =
+          new ItemRequestBuilder().withName(name).withCpuModel(cpuModel).withPrice(price).build();
 
-      Response response =
-          given()
-              .contentType(ContentType.JSON)
-              .header("x-api-key", API_KEY)
-              .body(request)
-              .when()
-              .post(BASE_URL)
-              .then()
-              .statusCode(200)
-              .extract()
-              .response();
-
-      logger.info("Created item '{}' with id: {}", name, response.jsonPath().getString("id"));
+      Response response = itemService.createItem(request);
+      String id = response.jsonPath().getString("id");
+      logger.info("Created item '{}' with ID: {}", name, id);
     }
   }
 
@@ -103,25 +83,19 @@ public class ItemManagementSteps {
 
   @When("the request to add the item is made")
   public void theRequestToAddTheItemIsMade() {
-    ItemData data = new ItemData(apiTestContext.getCpuModel(), apiTestContext.getPrice());
-    ItemRequest request = new ItemRequest(apiTestContext.getItemName(), data);
+    // Build the request from context
+    ItemRequest request =
+        new ItemRequestBuilder()
+            .withName(apiTestContext.getItemName())
+            .withCpuModel(apiTestContext.getCpuModel())
+            .withPrice(apiTestContext.getPrice())
+            .build();
 
     logger.info("Making POST request to add item: {}", apiTestContext.getItemName());
 
-    Response response =
-        given()
-            .contentType(ContentType.JSON)
-            .header("x-api-key", API_KEY)
-            .body(request)
-            .when()
-            .post(BASE_URL)
-            .then()
-            .statusCode(200)
-            .extract()
-            .response();
-
+    Response response = itemService.createItem(request);
     String id = response.jsonPath().getString("id");
-    logger.info("Item created with id: {}", id);
+    logger.info("Item created with ID: {}", id);
 
     apiTestContext.setResponse(response);
     apiTestContext.setObjectId(id);
@@ -132,37 +106,26 @@ public class ItemManagementSteps {
     String id = apiTestContext.getObjectId();
     logger.info("Making GET request to fetch item by id: {}", id);
 
-    Response response =
-        given()
-            .contentType(ContentType.JSON)
-            .header("x-api-key", API_KEY)
-            .when()
-            .get(BASE_URL + "/" + id)
-            .then()
-            .extract()
-            .response();
-
+    Response response = itemService.getItem(id);
     apiTestContext.setResponse(response);
   }
 
   @When("the request to list all items is made")
   public void theRequestToListAllItemsIsMade() {
-    logger.info("Making GET request to list all items");
+    logger.info("Making request to list all items");
+    // Call the service to get the list of items
+    List<Map<String, Object>> items = itemService.getAllItems();
 
-    Response response =
-        given().contentType(ContentType.JSON).header("x-api-key", API_KEY).when().get(BASE_URL).then().extract().response();
-
-    apiTestContext.setResponse(response);
-
-    List<Map<String, Object>> items = response.jsonPath().getList("$");
+    apiTestContext.setItems(items);
 
     logger.info("List of items returned ({} items):", items.size());
-
     items.forEach(
-        item -> {
-          logger.info(
-              "- ID: {}, Name: {}, Data: {}", item.get("id"), item.get("name"), item.get("data"));
-        });
+        item ->
+            logger.info(
+                "- ID: {}, Name: {}, Data: {}",
+                item.get("id"),
+                item.get("name"),
+                item.get("data")));
   }
 
   @When("the request to delete the item is made")
@@ -170,15 +133,7 @@ public class ItemManagementSteps {
     String id = apiTestContext.getObjectId();
     logger.info("Making DELETE request to remove item with id: {}", id);
 
-    Response response =
-        given()
-            .header("x-api-key", API_KEY)
-            .when()
-            .delete(BASE_URL + "/" + id)
-            .then()
-            .extract()
-            .response();
-
+    Response response = itemService.deleteItem(id);
     logger.info("DELETE response code: {}", response.statusCode());
     apiTestContext.setResponse(response);
   }
@@ -200,18 +155,7 @@ public class ItemManagementSteps {
     String id = apiTestContext.getObjectId();
     logger.info("Fetching item by ID {} to verify creation", id);
 
-    Response response =
-        given()
-            .contentType(ContentType.JSON)
-            .header("x-api-key", API_KEY)
-            .when()
-            .get(BASE_URL + "/" + id)
-            .then()
-            .statusCode(200)
-            .body("name", equalTo(expectedName))
-            .extract()
-            .response();
-
+    Response response = itemService.assertItemName(id, expectedName);
     apiTestContext.setResponse(response);
   }
 
@@ -223,14 +167,15 @@ public class ItemManagementSteps {
 
   @Then("the response contains multiple items")
   public void theResponseContainsMultipleItems() {
-    logger.info("Verifying response contains multiple items");
-    apiTestContext.getResponse().then().body("size()", greaterThan(1));
+    List<Map<String, Object>> items = apiTestContext.getItems();
+    assertThat(items.size(), greaterThan(1));
   }
 
   @Then("the item with name {string} no longer exists")
   public void theItemWithNameNoLongerExists(String name) {
     String id = apiTestContext.getObjectId();
     logger.info("Verifying item with id {} and name '{}' no longer exists", id, name);
-    given().header("x-api-key", API_KEY).when().get(BASE_URL + "/" + id).then().statusCode(404);
+    Response response = itemService.assertItemNotFound(id);
+    apiTestContext.setResponse(response);
   }
 }
