@@ -146,7 +146,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                    <configLocation>config/checkstyle/google_checks.xml</configLocation>
+                    <configLocation>${project.basedir}/config/checkstyle/google_checks.xml</configLocation>
                     <failOnViolation>true</failOnViolation>
                 </configuration>
                 <dependencies>
