@@ -13,5 +13,8 @@ RUN mvn dependency:go-offline
 # Copy the rest of the project
 COPY src ./src
 
+# Copy the config directory for checkstyle config
+COPY config ./config
+
 # Default command to run tests
 CMD ["mvn", "clean", "test"]
