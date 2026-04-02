@@ -1,5 +1,7 @@
 package com.api.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -20,14 +22,14 @@ public class ConfigReader {
     }
   }
 
-  public static String get(String key) {
+  public static String get(@NotNull String key) {
     // Check environment variable (Docker friendly)
-    String envVar = System.getenv(key.toUpperCase().replace(".", "_"));
+    final String envVar = System.getenv(key.toUpperCase().replace(".", "_"));
     if (envVar != null) {
       return envVar;
     }
     // Check system property (-Dkey=value)
-    String sysProp = System.getProperty(key);
+    final String sysProp = System.getProperty(key);
     if (sysProp != null) {
       return sysProp;
     }

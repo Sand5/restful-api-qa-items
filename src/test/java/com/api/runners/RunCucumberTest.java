@@ -1,4 +1,3 @@
-
 package com.api.runners;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
@@ -12,4 +11,4 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.api.steps")
-public class RunCucumberTest {}
+public class RunCucumberTest { }

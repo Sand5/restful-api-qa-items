@@ -26,7 +26,7 @@ public class ItemManagementSteps {
   private final ApiTestContext apiTestContext;
   private final ItemService itemService;
 
-  public ItemManagementSteps(ApiTestContext apiTestContext) {
+  public ItemManagementSteps(final ApiTestContext apiTestContext) {
     this.apiTestContext = apiTestContext;
     // Pass a new ItemApi to ItemService
     this.itemService = new ItemService(new ItemApi());
@@ -36,7 +36,7 @@ public class ItemManagementSteps {
   // GIVEN STEPS
   // -------------------------
   @Given("an item exists with name {string}, CPU model {string}, and price {double}")
-  public void anItemExistsWithNameCpuModelAndPrice(String itemName, String cpuModel, double price) {
+  public void anItemExistsWithNameCpuModelAndPrice(final String itemName, final String cpuModel, final double price) {
     logger.info("Creating item with name: {}, CPU model: {}, price: {}", itemName, cpuModel, price);
 
     // Save values to api test context
@@ -45,12 +45,12 @@ public class ItemManagementSteps {
     apiTestContext.setPrice(price);
 
     // Use builder to create ItemRequest
-    ItemRequest request =
+    final ItemRequest request =
         new ItemRequestBuilder().withName(itemName).withCpuModel(cpuModel).withPrice(price).build();
 
     // Call service to create item
-    Response response = itemService.createItem(request);
-    String id = response.jsonPath().getString("id");
+    final Response response = itemService.createItem(request);
+    final String id = response.jsonPath().getString("id");
     logger.info("Item created with ID: {}", id);
 
     // Save response and objectId in the test context
@@ -59,20 +59,20 @@ public class ItemManagementSteps {
   }
 
   @Given("multiple items exist")
-  public void multipleItemsExist(@NotNull DataTable dataTable) {
-    var items = dataTable.asMaps(String.class, String.class);
+  public void multipleItemsExist(@NotNull final DataTable dataTable) {
+    final var items = dataTable.asMaps(String.class, String.class);
     logger.info("Creating multiple items for test setup");
 
-    for (var item : items) {
-      String name = item.get("name");
-      String cpuModel = item.get("cpuModel");
-      double price = Double.parseDouble(item.get("price"));
+    for (final var item : items) {
+      final String name = item.get("name");
+      final String cpuModel = item.get("cpuModel");
+      final double price = Double.parseDouble(item.get("price"));
 
-      ItemRequest request =
+      final ItemRequest request =
           new ItemRequestBuilder().withName(name).withCpuModel(cpuModel).withPrice(price).build();
 
-      Response response = itemService.createItem(request);
-      String id = response.jsonPath().getString("id");
+      final Response response = itemService.createItem(request);
+      final String id = response.jsonPath().getString("id");
       logger.info("Created item '{}' with ID: {}", name, id);
     }
   }
@@ -84,7 +84,7 @@ public class ItemManagementSteps {
   @When("the request to add the item is made")
   public void theRequestToAddTheItemIsMade() {
     // Build the request from context
-    ItemRequest request =
+    final ItemRequest request =
         new ItemRequestBuilder()
             .withName(apiTestContext.getItemName())
             .withCpuModel(apiTestContext.getCpuModel())
@@ -93,8 +93,8 @@ public class ItemManagementSteps {
 
     logger.info("Making POST request to add item: {}", apiTestContext.getItemName());
 
-    Response response = itemService.createItem(request);
-    String id = response.jsonPath().getString("id");
+    final Response response = itemService.createItem(request);
+    final String id = response.jsonPath().getString("id");
     logger.info("Item created with ID: {}", id);
 
     apiTestContext.setResponse(response);
@@ -103,10 +103,10 @@ public class ItemManagementSteps {
 
   @When("the request to get the item by id is made")
   public void theRequestToGetTheItemByIdIsMade() {
-    String id = apiTestContext.getObjectId();
+    final String id = apiTestContext.getObjectId();
     logger.info("Making GET request to fetch item by id: {}", id);
 
-    Response response = itemService.getItem(id);
+    final Response response = itemService.getItem(id);
     apiTestContext.setResponse(response);
   }
 
@@ -114,7 +114,7 @@ public class ItemManagementSteps {
   public void theRequestToListAllItemsIsMade() {
     logger.info("Making request to list all items");
     // Call the service to get the list of items
-    List<Map<String, Object>> items = itemService.getAllItems();
+    final List<Map<String, Object>> items = itemService.getAllItems();
 
     apiTestContext.setItems(items);
 
@@ -130,10 +130,10 @@ public class ItemManagementSteps {
 
   @When("the request to delete the item is made")
   public void theRequestToDeleteTheItemIsMade() {
-    String id = apiTestContext.getObjectId();
+    final String id = apiTestContext.getObjectId();
     logger.info("Making DELETE request to remove item with id: {}", id);
 
-    Response response = itemService.deleteItem(id);
+    final Response response = itemService.deleteItem(id);
     logger.info("DELETE response code: {}", response.statusCode());
     apiTestContext.setResponse(response);
   }
@@ -143,39 +143,39 @@ public class ItemManagementSteps {
   // -------------------------
 
   @Then("a {int} response code is returned")
-  public void aResponseCodeIsReturned(int expectedStatusCode) {
+  public void aResponseCodeIsReturned(final int expectedStatusCode) {
     logger.info("Verifying response code: {}", expectedStatusCode);
     apiTestContext.getResponse().then().statusCode(expectedStatusCode);
   }
 
   @Then("the item with name {string} is created")
-  public void theItemWithNameIsCreated(String expectedName) {
+  public void theItemWithNameIsCreated(final String expectedName) {
     logger.info("Verifying item '{}' was successfully created", expectedName);
 
-    String id = apiTestContext.getObjectId();
+    final String id = apiTestContext.getObjectId();
     logger.info("Fetching item by ID {} to verify creation", id);
 
-    Response response = itemService.assertItemName(id, expectedName);
+    final Response response = itemService.assertItemName(id, expectedName);
     apiTestContext.setResponse(response);
   }
 
   @Then("the response contains the item with name {string}")
-  public void theResponseContainsTheItemWithName(String expectedName) {
+  public void theResponseContainsTheItemWithName(final String expectedName) {
     logger.info("Verifying response contains item with name: {}", expectedName);
     apiTestContext.getResponse().then().body("name", equalTo(expectedName));
   }
 
   @Then("the response contains multiple items")
   public void theResponseContainsMultipleItems() {
-    List<Map<String, Object>> items = apiTestContext.getItems();
+    final List<Map<String, Object>> items = apiTestContext.getItems();
     assertThat(items.size(), greaterThan(1));
   }
 
   @Then("the item with name {string} no longer exists")
-  public void theItemWithNameNoLongerExists(String name) {
-    String id = apiTestContext.getObjectId();
+  public void theItemWithNameNoLongerExists(final String name) {
+    final String id = apiTestContext.getObjectId();
     logger.info("Verifying item with id {} and name '{}' no longer exists", id, name);
-    Response response = itemService.assertItemNotFound(id);
+    final Response response = itemService.assertItemNotFound(id);
     apiTestContext.setResponse(response);
   }
 }

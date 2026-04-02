@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+
+    <!-- ===========================
+         Filters
+         =========================== -->
+    <!-- Suppress violations near specific text patterns.
+         Example: ignore generated code or lines with certain comments -->
+    <module name="com.puppycrawl.tools.checkstyle.filters.SuppressWithNearbyTextFilter"/>
+
+    <!-- ===========================
+         TreeWalker
+         This is the core module that walks through your Java AST (Abstract Syntax Tree)
+         and applies most of the style checks
+         =========================== -->
+    <module name="TreeWalker">
+
+        <!-- ===========================
+             Braces Placement
+             =========================== -->
+        <!-- LeftCurly: check placement of '{' for code blocks -->
+        <module name="LeftCurly">
+            <!-- option="eol" enforces the opening brace to be at the end of the line -->
+            <property name="option" value="eol"/>
+            <!-- tokens define which language constructs this applies to -->
+            <property name="tokens" value="LITERAL_IF,LITERAL_FOR,LITERAL_WHILE,LITERAL_SWITCH,LITERAL_DO"/>
+        </module>
+
+        <!-- RightCurly: check placement of '}' for code blocks -->
+        <module name="RightCurly">
+            <!-- option="alone_or_singleline" means either:
+                 - the closing brace is on a line by itself
+                 - or the block is single-line like { return x; } -->
+            <property name="option" value="alone_or_singleline"/>
+            <property name="tokens" value="LITERAL_IF,LITERAL_FOR,LITERAL_WHILE,LITERAL_SWITCH,LITERAL_DO"/>
+        </module>
+
+        <!-- ===========================
+             Javadoc Checks
+             =========================== -->
+        <!-- Require Javadoc for public classes, interfaces, enums, and records -->
+        <!-- Note: previously your public classes were not flagged because the default
+             configuration may not enforce Javadoc for records or may skip some scopes.
+             Setting scope explicitly ensures missing Javadocs are reported. -->
+        <module name="JavadocType">
+            <!-- <property name="scope" value="public"/>
+          <property name="excludeScope" value=""/> -->
+        </module>
+
+        <!-- Require Javadoc for public methods and constructors -->
+        <!-- Same note applies: explicitly enforcing scope ensures violations are caught -->
+        <module name="JavadocMethod">
+           <!-- <property name="scope" value="public"/>
+            <property name="excludeScope" value=""/> -->
+        </module>
+
+        <!-- ===========================
+             Naming Conventions
+             =========================== -->
+        <!-- Enforce class/interface/enum names (e.g., PascalCase) -->
+        <module name="TypeName"/>
+        <!-- Enforce method names (e.g., camelCase) -->
+        <module name="MethodName"/>
+        <!-- Enforce parameter names (e.g., camelCase) -->
+        <module name="ParameterName"/>
+        <!-- Enforce field/member variable names (e.g., camelCase) -->
+        <module name="MemberName"/>
+        <!-- Enforce local variable names (e.g., camelCase) -->
+        <module name="LocalVariableName"/>
+
+        <!-- ===========================
+             Miscellaneous Style Checks
+             =========================== -->
+        <!-- Require whitespace after keywords and commas -->
+        <module name="WhitespaceAfter"/>
+        <!-- Require whitespace around operators, parentheses, etc. -->
+        <module name="WhitespaceAround"/>
+        <!-- Check for empty code blocks like {} -->
+        <module name="EmptyBlock"/>
+        <!-- Require local variables to be declared final if never reassigned -->
+        <module name="FinalLocalVariable"/>
+    </module> <!-- end TreeWalker -->
+
+</module> <!-- end Checker -->
