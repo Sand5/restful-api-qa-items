@@ -1,13 +1,13 @@
 # RESTful API Test Automation Project
 
-Designed and implemented a robust, maintainable API test automation framework in **Java** using **Cucumber**, *
-*RestAssured**,**Junit 5** and **Maven**. The framework features a layered architecture with builder, endpoints,
+Designed and implemented a robust, maintainable API test automation framework in **Java** using **Cucumber**,   
+**RestAssured**,**Junit 5** and **Maven**. The framework features a layered architecture with builder, endpoints,
 service, and steps layers, promoting separation of concerns and reusability. Implemented context management with
 ApiTestContext to isolate scenarios, along with Hooks for lifecycle handling, safe cleanup, and detailed logging using
 SLF4J. Test coverage includes CRUD operations, multiple scenarios per feature, and assertions for both positive and
 negative outcomes. Integrated data-driven testing with Cucumber DataTables and ensured resilience with safe delete and
 error handling. The project is CI-ready, containerized with Docker, and structured for scalability to other API
-endpoints.API service can be located at https://restful-api.dev/
+endpoints. The API service under test can be located at https://restful-api.dev/
 
 ## Badges
 
@@ -278,6 +278,25 @@ Dockerfile not found: Ensure the file is named exactly Dockerfile (case-sensitiv
 No tests executed: Verify src/test is correctly copied into the container
 Dependency issues: Rebuild the image without cache:
 docker build --no-cache -t rest-api-tests .
+
+### Debugging Docker File Issues
+If something works locally but fails in Docker/CI (e.g. missing files like Checkstyle config), you can inspect the container file system.
+1. List files inside the container:
+docker run --rm rest-api-tests ls -R /app
+2. You should see your project files, including:
+   /app:
+   pom.xml
+   src
+   config
+
+/app/config/checkstyle:
+google_checks.xml
+
+If a file is missing (e.g. config/checkstyle/google_checks.xml), it means it was not copied into the Docker image.
+
+Fix missing files by ensuring your Dockerfile includes the correct COPY commands to include all necessary files and directories.
+COPY . . copies everything from the project root, but if you have a .dockerignore file that excludes certain files/directories, they won't be included in the image. Check your .dockerignore for any exclusions that might be causing issues.
+COPY config ./config ensures the config directory is included if it's not already copied by the previous command.
 
 ## Test Hooks
 
