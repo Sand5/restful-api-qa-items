@@ -6,6 +6,7 @@ Feature: Item management
     When the request to create the item is made
     Then the response status code is 200
     And the item is created successfully
+    And the response matches the item schema
 
   @smoke
   Scenario: Ability to fetch an item by id
@@ -20,6 +21,7 @@ Feature: Item management
     When the request to create the item is made
     Then the response status code is 200
     And the item is created successfully
+    And the response matches the item schema
 
   @regression
   Scenario: Ability to list multiple items

@@ -6,7 +6,6 @@ import com.api.model.ItemRequest;
 import com.api.service.ItemService;
 import com.api.utils.ApiTestContext;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -202,4 +202,11 @@ public class ItemManagementSteps {
     logger.info("Item verification successful for: {}", actualName);
   }
 
+    @Then("the response matches the item schema")
+    public void validateSchema() {
+        apiTestContext.getResponse()
+                .then()
+                .assertThat()
+                .body(matchesJsonSchemaInClasspath("schemas/item-schema.json"));
+    }
 }
