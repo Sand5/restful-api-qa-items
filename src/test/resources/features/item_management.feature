@@ -8,18 +8,18 @@ Feature: Item management
     And the item is created successfully
 
   @smoke
-  Scenario: Verify a specific item can be created
-    Given an item exists with name "Apple MacBook Pro 16", CPU model "Intel Core i9", and price 1849.99
-    When the request to create the item is made
-    Then the response status code is 200
-    And the item is created successfully
-
-  @smoke
   Scenario: Ability to fetch an item by id
     Given an item exists
     When the request to create the item is made
     And the request to get the item by id is made
     Then the response contains the item
+
+  @smoke
+  Scenario: Verify a specific item can be created
+    Given an item exists with name "Apple MacBook Pro 16", CPU model "Intel Core i9", and price 1849.99
+    When the request to create the item is made
+    Then the response status code is 200
+    And the item is created successfully
 
   @regression
   Scenario: Ability to list multiple items
@@ -37,3 +37,9 @@ Feature: Item management
     Then the response status code is 200
     And the request to delete the item is made
     And the item is deleted successfully
+
+  @regression
+  Scenario: Fetching a non-existent item returns 404
+    Given an item id that does not exist
+    When the request to get the item by id is made
+    Then the response status code is 404

@@ -6,6 +6,7 @@ import com.api.model.ItemRequest;
 import com.api.service.ItemService;
 import com.api.utils.ApiTestContext;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -56,6 +57,11 @@ public class ItemManagementSteps {
 
     logger.info("Item prepared for creation (not created yet)");
   }
+
+    @Given("an item id that does not exist")
+    public void anItemIdThatDoesNotExist() {
+        apiTestContext.setObjectId("non-existing-id-12345");
+    }
 
   @Given("multiple items exist")
   public void multipleItemsExist(@NotNull final DataTable dataTable) {
@@ -195,4 +201,5 @@ public class ItemManagementSteps {
 
     logger.info("Item verification successful for: {}", actualName);
   }
+
 }
