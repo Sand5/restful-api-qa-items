@@ -1,5 +1,6 @@
 package com.api.utils;
 
+import com.api.model.ItemRequest;
 import io.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
@@ -7,10 +8,8 @@ import java.util.Map;
 public class ApiTestContext {
 
   private Response response;
+  private ItemRequest itemRequest;
   private String objectId;
-  private String itemName;
-  private String cpuModel;
-  private double price;
   private List<Map<String, Object>> items;
 
   public Response getResponse() {
@@ -21,17 +20,9 @@ public class ApiTestContext {
     return objectId;
   }
 
-  public String getItemName() {
-    return itemName;
-  }
-
-  public String getCpuModel() {
-    return cpuModel;
-  }
-
-  public double getPrice() {
-    return price;
-  }
+    public ItemRequest getItemRequest() {
+        return itemRequest;
+    }
 
   public List<Map<String, Object>> getItems() {
     return items;
@@ -45,35 +36,18 @@ public class ApiTestContext {
     this.objectId = objectId;
   }
 
-  public void setItemName(String itemName) {
-    this.itemName = itemName;
-  }
-
-  public void setCpuModel(String cpuModel) {
-    this.cpuModel = cpuModel;
-  }
-
-  public void setPrice(double price) {
-    this.price = price;
-  }
-
+    public void setItemRequest(ItemRequest itemRequest) {
+        this.itemRequest = itemRequest;
+    }
   public void setItems(List<Map<String, Object>> items) {
     this.items = items;
   }
 
-  public void clear() {
-    clearItemData();
-    clearResponse();
-  }
+     public void clear() {
+        response = null;
+        objectId = null;
+        itemRequest = null;
+        items = null;
+    }
 
-  private void clearItemData() {
-    itemName = null;
-    cpuModel = null;
-    price = 0.0;
-  }
-
-  private void clearResponse() {
-    response = null;
-    objectId = null;
-  }
-}
+    }

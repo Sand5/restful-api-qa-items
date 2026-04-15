@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ItemManagementSteps {
 
@@ -36,26 +36,25 @@ public class ItemManagementSteps {
   // GIVEN STEPS
   // -------------------------
   @Given("an item exists with name {string}, CPU model {string}, and price {double}")
-  public void anItemExistsWithNameCpuModelAndPrice(final String itemName, final String cpuModel, final double price) {
-    logger.info("Creating item with name: {}, CPU model: {}, price: {}", itemName, cpuModel, price);
+  public void anItemExistsWithNameCpuModelAndPrice(
+      final String itemName, final String cpuModel, final double price) {
+    logger.info("Preparing item data: {}, {}, {}", itemName, cpuModel, price);
 
-    // Save values to api test context
-    apiTestContext.setItemName(itemName);
-    apiTestContext.setCpuModel(cpuModel);
-    apiTestContext.setPrice(price);
-
-    // Use builder to create ItemRequest
     final ItemRequest request =
         new ItemRequestBuilder().withName(itemName).withCpuModel(cpuModel).withPrice(price).build();
 
-    // Call service to create item
-    final Response response = itemService.createItem(request);
-    final String id = response.jsonPath().getString("id");
-    logger.info("Item created with ID: {}", id);
+    // ONLY store request — DO NOT call API here
+    apiTestContext.setItemRequest(request);
+  }
 
-    // Save response and objectId in the test context
-    apiTestContext.setResponse(response);
-    apiTestContext.setObjectId(id);
+  @Given("an item exists")
+  public void anItemExists() {
+    logger.info("Creating item with default values for test setup");
+    final ItemRequest request = new ItemRequestBuilder().withDefaultValues().build();
+
+    apiTestContext.setItemRequest(request);
+
+    logger.info("Item prepared for creation (not created yet)");
   }
 
   @Given("multiple items exist")
@@ -81,24 +80,19 @@ public class ItemManagementSteps {
   // WHEN STEPS
   // -------------------------
 
-  @When("the request to add the item is made")
-  public void theRequestToAddTheItemIsMade() {
-    // Build the request from context
-    final ItemRequest request =
-        new ItemRequestBuilder()
-            .withName(apiTestContext.getItemName())
-            .withCpuModel(apiTestContext.getCpuModel())
-            .withPrice(apiTestContext.getPrice())
-            .build();
+  @When("the request to create the item is made")
+  public void theRequestToCreateTheItemIsMade() {
 
-    logger.info("Making POST request to add item: {}", apiTestContext.getItemName());
+    final ItemRequest request = apiTestContext.getItemRequest();
+    logger.info("Creating item: {}", request.name());
 
     final Response response = itemService.createItem(request);
+
     final String id = response.jsonPath().getString("id");
-    logger.info("Item created with ID: {}", id);
 
     apiTestContext.setResponse(response);
     apiTestContext.setObjectId(id);
+    logger.info("Item created with ID: {}", id);
   }
 
   @When("the request to get the item by id is made")
@@ -106,7 +100,7 @@ public class ItemManagementSteps {
     final String id = apiTestContext.getObjectId();
     logger.info("Making GET request to fetch item by id: {}", id);
 
-    final Response response = itemService.getItem(id);
+    final Response response = itemService.getItemById(id);
     apiTestContext.setResponse(response);
   }
 
@@ -142,40 +136,63 @@ public class ItemManagementSteps {
   // THEN STEPS
   // -------------------------
 
-  @Then("a {int} response code is returned")
-  public void aResponseCodeIsReturned(final int expectedStatusCode) {
+  @Then("the response status code is {int}")
+  public void aResponseStatusCodeIs(final int expectedStatusCode) {
     logger.info("Verifying response code: {}", expectedStatusCode);
     apiTestContext.getResponse().then().statusCode(expectedStatusCode);
   }
 
-  @Then("the item with name {string} is created")
-  public void theItemWithNameIsCreated(final String expectedName) {
-    logger.info("Verifying item '{}' was successfully created", expectedName);
+    @Then("the response contains the item")
+    public void theResponseContainsTheItem() {
 
-    final String id = apiTestContext.getObjectId();
-    logger.info("Fetching item by ID {} to verify creation", id);
+        final ItemRequest expected = apiTestContext.getItemRequest();
+        final Response response = apiTestContext.getResponse();
 
-    final Response response = itemService.assertItemName(id, expectedName);
-    apiTestContext.setResponse(response);
-  }
+        final String actualName = response.jsonPath().getString("name");
+        final String actualCpu = response.jsonPath().getString("data.cpuModel");
+        final double actualPrice = response.jsonPath().getDouble("data.price");
 
-  @Then("the response contains the item with name {string}")
-  public void theResponseContainsTheItemWithName(final String expectedName) {
-    logger.info("Verifying response contains item with name: {}", expectedName);
-    apiTestContext.getResponse().then().body("name", equalTo(expectedName));
-  }
-
+        assertEquals(expected.name(), actualName);
+        assertEquals(expected.data().cpuModel(), actualCpu);
+        assertEquals(expected.data().price(), actualPrice);
+    }
   @Then("the response contains multiple items")
   public void theResponseContainsMultipleItems() {
     final List<Map<String, Object>> items = apiTestContext.getItems();
     assertThat(items.size(), greaterThan(1));
   }
 
-  @Then("the item with name {string} no longer exists")
-  public void theItemWithNameNoLongerExists(final String name) {
+  @Then("the item is deleted successfully")
+  public void verifyDeleted() {
     final String id = apiTestContext.getObjectId();
-    logger.info("Verifying item with id {} and name '{}' no longer exists", id, name);
-    final Response response = itemService.assertItemNotFound(id);
-    apiTestContext.setResponse(response);
+    logger.info("Verifying item with id {} no longer exists", id);
+
+     final Response response = itemService.getItemById(id);
+      assertEquals(404, response.statusCode());
+      apiTestContext.setResponse(response);
+  }
+
+  @Then("the item is created successfully")
+  public void theItemIsCreatedSuccessfully() {
+    // 1. Get expected data from context
+    final ItemRequest expected = apiTestContext.getItemRequest();
+    final String id = apiTestContext.getObjectId();
+
+    logger.info("Verifying item creation for ID: {}", id);
+
+    // 2. Call GET API to fetch created item
+    final Response response = itemService.getItemById(id);
+
+    // 3. Extract actual values
+    final String actualName = response.jsonPath().getString("name");
+    final String actualCpu = response.jsonPath().getString("data.cpuModel");
+    final double actualPrice = response.jsonPath().getDouble("data.price");
+
+    // 4. Assertions
+    assertEquals(expected.name(), actualName);
+    assertEquals(expected.data().cpuModel(), actualCpu);
+    assertEquals(expected.data().price(), actualPrice);
+
+    logger.info("Item verification successful for: {}", actualName);
   }
 }

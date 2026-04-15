@@ -36,7 +36,7 @@ public class Hooks {
     }
 
     // Cleanup test data if an object was created
-    String id = context.getObjectId();
+    final String id = context.getObjectId();
     if (id != null) {
       itemService.deleteItemIfExists(id); // safe cleanup
     }
@@ -44,7 +44,7 @@ public class Hooks {
     // Clear context for next scenario
     context.clear();
 
-    String status = scenario.isFailed() ? "FAILED" : "PASSED";
+   final  String status = scenario.isFailed() ? "FAILED" : "PASSED";
     logger.info("=== Finished scenario: {} | Status: {} ===", scenario.getName(), status);
   }
 }

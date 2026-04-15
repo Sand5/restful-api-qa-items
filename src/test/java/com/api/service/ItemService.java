@@ -6,11 +6,8 @@ import io.restassured.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Map;
-
-import static org.hamcrest.Matchers.equalTo;
 
 public class ItemService {
 
@@ -22,14 +19,14 @@ public class ItemService {
     this.itemApi = itemApi;
   }
 
-    /**
-     * Sends item request to API.
-     *
-     * @param request the item request payload
-     */
+  /**
+   * Sends item request to API.
+   *
+   * @param request the item request payload
+   */
   public Response createItem(@NotNull ItemRequest request) {
     logger.info("Creating item with name: {}", request.name());
-    final Response response = itemApi.createItem(request).then().statusCode(200).extract().response();
+    final Response response = itemApi.createItem(request);
     logger.info("Item created with ID: {}", response.jsonPath().getString("id"));
     return response;
   }
@@ -40,7 +37,7 @@ public class ItemService {
    * @param id the item ID
    * @return the response from the API
    */
-  public Response getItem(String id) {
+  public Response getItemById(String id) {
     logger.info("Fetching item with ID: {}", id);
     final Response response = itemApi.getItem(id);
     logger.info("Received response with status: {}", response.statusCode());
@@ -55,8 +52,8 @@ public class ItemService {
    */
   public Response deleteItem(String id) {
     logger.info("Deleting item with ID: {}", id);
-    final Response response = itemApi.deleteItem(id).then().statusCode(200).extract().response();
-    logger.info("Item with ID {} deleted successfully", id);
+    final Response response = itemApi.deleteItem(id);
+    logger.info("Delete response status for ID {}: {}", id, response.statusCode());
     return response;
   }
 
@@ -95,34 +92,5 @@ public class ItemService {
 
     // Return parsed list
     return items;
-  }
-
-  /**
-   * Assert the correct item name.
-   *
-   * @param id the item ID
-   * @param expectedName the expected name
-   * @return the response from the API
-   */
-  public Response assertItemName(String id, String expectedName) {
-    logger.info("Fetching item with ID {} to verify name '{}'", id, expectedName);
-    final Response response = getItem(id);
-    logger.info("Received response with a status code: {}", response.statusCode());
-    response.then().statusCode(200).body("name", equalTo(expectedName));
-
-    return response;
-  }
-
-  /**
-   * Assert the correct item is deleted.
-   *
-   * @param id the item ID
-   * @return the response from the API
-   */
-  public Response assertItemNotFound(String id) {
-    logger.info("Verifying item with ID {} does not exist", id);
-    final Response response = itemApi.getItem(id);
-    response.then().statusCode(404);
-    return response;
   }
 }
