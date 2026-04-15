@@ -33,7 +33,6 @@ You can download them from the **Actions → build → Artifacts** section on Gi
 ## Project Structure
 
 ```
-
 restful-api-qa-items/
 ├── src/
 │   ├── main/
@@ -42,9 +41,10 @@ restful-api-qa-items/
 │   │           └── api/
 │   │               └── utils/       ← Main utilities / helpers
 │   │                   └── ConfigReader.java
-│   │               └── model/       ← Could also be shared DTOs if needed in main
+│   │               └── model/       ← Shared DTOs / domain models
 │   │                   ├── ItemData.java
 │   │                   └── ItemRequest.java
+│
 │   └── test/
 │       ├── java/
 │       │   └── com/
@@ -63,14 +63,19 @@ restful-api-qa-items/
 │       │       │   └── RunCucumberTest.java
 │       │       └── utils/       ← Test helpers / context
 │       │           └── ApiTestContext.java
+│
 │       └── resources/
 │           ├── config.properties
 │           ├── features/
 │           │   └── item_management.feature
+│           ├── schemas/        ← JSON schema validation files
+│           │   └── item-schema.json
 │           └── junit-platform.properties
+│
 ├── config/
-│   └── checkstyle/              ← Checkstyle configuration
+│   └── checkstyle/
 │       └── google_checks.xml
+│
 ├── target/
 │   ├── classes/
 │   ├── test-classes/
@@ -78,9 +83,11 @@ restful-api-qa-items/
 │   ├── cucumber-report.json
 │   ├── surefire-reports/
 │   └── generated-sources/
+│
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
+│
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .dockerignore
