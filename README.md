@@ -1,7 +1,6 @@
 # RESTful API Test Automation Project
 
-Designed and implemented a robust, maintainable API test automation framework in **Java** using **Cucumber**,   
-**RestAssured**,**Junit 5** and **Maven**. The framework features a layered architecture with builder, endpoints,
+Designed and implemented a robust, maintainable API test automation framework in **Java** using **Cucumber**,**RestAssured**,**Junit 5** and **Maven**. The framework features a layered architecture with builder, endpoints,
 service, and steps layers, promoting separation of concerns and reusability. Implemented context management with
 ApiTestContext to isolate scenarios, along with Hooks for lifecycle handling, safe cleanup, and detailed logging using
 SLF4J. Test coverage includes CRUD operations, multiple scenarios per feature, and assertions for both positive and
