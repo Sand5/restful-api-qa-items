@@ -63,12 +63,6 @@
             <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-picocontainer</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- RestAssured for API testing -->
         <dependency>
@@ -112,6 +106,43 @@
             <version>26.0.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Pact JUnit 5 Consumer -->
+        <dependency>
+            <groupId>au.com.dius.pact.consumer</groupId>
+            <artifactId>junit5</artifactId>
+            <version>4.6.10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.1.14</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <version>3.3.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>3.3.5</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -156,6 +187,7 @@
                 <configuration>
                     <configLocation>${project.basedir}/config/checkstyle/google_checks.xml</configLocation>
                     <failOnViolation>true</failOnViolation>
+
                 </configuration>
                 <dependencies>
                     <!-- Override bundled Checkstyle to a version that supports SuppressWithNearbyTextFilter -->
@@ -181,5 +213,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

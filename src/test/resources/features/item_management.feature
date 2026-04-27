@@ -1,3 +1,4 @@
+@item-management
 Feature: Item management
 
   @smoke
@@ -8,14 +9,14 @@ Feature: Item management
     And the item is created successfully
     And the response matches the item schema
 
-  @smoke
+
   Scenario: Ability to fetch an item by id
     Given an item exists
     When the request to create the item is made
     And the request to get the item by id is made
     Then the response contains the item
 
-  @smoke
+
   Scenario: Verify a specific item can be created
     Given an item exists with name "Apple MacBook Pro 16", CPU model "Intel Core i9", and price 1849.99
     When the request to create the item is made

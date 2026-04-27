@@ -1,7 +1,6 @@
 package com.api.steps;
 
 import com.api.builder.ItemRequestBuilder;
-import com.api.endpoints.ItemApi;
 import com.api.model.ItemRequest;
 import com.api.service.ItemService;
 import com.api.utils.ApiTestContext;
@@ -27,11 +26,10 @@ public class ItemManagementSteps {
   private final ApiTestContext apiTestContext;
   private final ItemService itemService;
 
-  public ItemManagementSteps(final ApiTestContext apiTestContext) {
-    this.apiTestContext = apiTestContext;
-    // Pass a new ItemApi to ItemService
-    this.itemService = new ItemService(new ItemApi());
-  }
+    public ItemManagementSteps(ApiTestContext apiTestContext, ItemService itemService) {
+        this.apiTestContext = apiTestContext;
+        this.itemService = itemService;
+    }
 
   // -------------------------
   // GIVEN STEPS

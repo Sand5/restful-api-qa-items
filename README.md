@@ -1,12 +1,14 @@
 # RESTful API Test Automation Project
 
-Designed and implemented a robust, maintainable API test automation framework in **Java** using **Cucumber**,**RestAssured**,**Junit 5** and **Maven**. The framework features a layered architecture with builder, endpoints,
-service, and steps layers, promoting separation of concerns and reusability. Implemented context management with
-ApiTestContext to isolate scenarios, along with Hooks for lifecycle handling, safe cleanup, and detailed logging using
-SLF4J. Test coverage includes CRUD operations, multiple scenarios per feature, and assertions for both positive and
-negative outcomes. Integrated data-driven testing with Cucumber DataTables and ensured resilience with safe delete and
-error handling. The project is CI-ready, containerized with Docker, and structured for scalability to other API
-endpoints. The API service under test can be located at https://restful-api.dev/
+Designed and implemented a robust, maintainable API test automation framework in **Java** using **Cucumber**, **RestAssured**, **JUnit 5**, and **Maven**. The framework features a layered architecture with builder, endpoints, service, and steps layers, promoting clear separation of concerns and reusability.
+
+Enhanced test coverage by incorporating **Pact consumer contract tests**, enabling verification of API interactions and ensuring compatibility between services.
+
+Implemented context management with ApiTestContext to isolate scenarios, along with Hooks for lifecycle handling, safe cleanup, and detailed logging using SLF4J. Test coverage includes CRUD operations, multiple scenarios per feature, and assertions for both positive and negative outcomes.
+
+Integrated data-driven testing with Cucumber DataTables and ensured resilience with safe delete operations and robust error handling. The project is CI-ready, containerized with Docker, and structured for scalability across additional API endpoints.
+
+The API service under test can be located at https://restful-api.dev/
 
 ## Badges
 
@@ -18,6 +20,7 @@ endpoints. The API service under test can be located at https://restful-api.dev/
 ![Docker](https://img.shields.io/badge/docker-ready-2496ed?logo=docker&logoColor=white)
 ![Parallel Tests](https://img.shields.io/badge/Tests-Parallel-green)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI-2088FF?logo=githubactions&logoColor=white)
+![Pact](https://img.shields.io/badge/Contract%20Testing-Pact-blue)
 ---
 
 ## Test Reports
@@ -35,61 +38,75 @@ You can download them from the **Actions → build → Artifacts** section on Gi
 restful-api-qa-items/
 ├── src/
 │   ├── main/
-│   │   └── java/
-│   │       └── com/
-│   │           └── api/
-│   │               └── utils/       ← Main utilities / helpers
-│   │                   └── ConfigReader.java
-│   │               └── model/       ← Shared DTOs / domain models
-│   │                   ├── ItemData.java
-│   │                   └── ItemRequest.java
+│   │   ├── java/com/api/
+│   │   │   ├── model/              ← Shared domain models (DTOs)
+│   │   │   │   ├── ItemData.java
+│   │   │   │   └── ItemRequest.java
+│   │   │   └── utils/              ← Core utilities
+│   │   │       └── ConfigReader.java
+│   │   └── resources/
 │
 │   └── test/
-│       ├── java/
-│       │   └── com/
-│       │       ├── builder/     ← Test builders for requests
-│       │       │   └── ItemRequestBuilder.java
-│       │       ├── client/      ← Optional low-level HTTP wrappers
-│       │       ├── endpoints/   ← API classes (ItemApi)
-│       │       │   └── ItemApi.java
-│       │       ├── service/     ← Service layer wrapping API calls
-│       │       │   └── ItemService.java
-│       │       ├── steps/       ← Cucumber step definitions
-│       │       │   └── ItemManagementSteps.java
-│       │       ├── hooks/       ← Lifecycle hooks (@Before, @After)
-│       │       │   └── Hooks.java
-│       │       ├── runners/     ← Test runners for Cucumber
-│       │       │   └── RunCucumberTest.java
-│       │       └── utils/       ← Test helpers / context
-│       │           └── ApiTestContext.java
+│       ├── java/com/api/
+│       │   ├── builder/            ← Test data builders
+│       │   │   └── ItemRequestBuilder.java
+│       │   │
+│       │   ├── client/             ← Low-level HTTP client
+│       │   │   └── RestClient.java
+│       │   │
+│       │   ├── config/             ← Spring Test Configuration (DI)
+│       │   │   ├── CucumberSpringConfig.java   ← Cucumber + Spring Boot bridge
+│       │   │   └── TestConfig.java             ← Bean definitions (ItemService, ItemApi, Context)
+│       │   │
+│       │   ├── contract/           ← Pact Contract Tests (Consumer-driven)
+│       │   │   ├── ItemCreateContractTest.java
+│       │   │   ├── ItemGetContractTest.java
+│       │   │   └── PactConfig.java
+│       │   │
+│       │   ├── endpoints/          ← API layer (HTTP calls)
+│       │   │   └── ItemApi.java
+│       │   │
+│       │   ├── service/            ← Business/service layer
+│       │   │   └── ItemService.java
+│       │   │
+│       │   ├── steps/              ← Cucumber step definitions
+│       │   │   └── ItemManagementSteps.java
+│       │   │
+│       │   ├── hooks/              ← Cucumber hooks (@Before, @After)
+│       │   │   └── Hooks.java
+│       │   │
+│       │   ├── runners/            ← Test runner
+│       │   │   └── RunCucumberTest.java
+│       │   │
+│       │   └── utils/              ← Test context & helpers
+│       │       └── ApiTestContext.java
 │
 │       └── resources/
-│           ├── config.properties
-│           ├── features/
+│           ├── config.properties   ← Environment config (base URL, etc.)
+│           ├── features/           ← Cucumber feature files
 │           │   └── item_management.feature
-│           ├── schemas/        ← JSON schema validation files
+│           ├── schemas/            ← JSON schema validation
 │           │   └── item-schema.json
 │           └── junit-platform.properties
+│
+├── target/
+│   ├── cucumber-report.html
+│   ├── cucumber-report.json
+│   ├── pacts/                     ← Generated Pact contracts
+│   │   └── qa-items-consumer-qa-items-provider.json
+│   └── surefire-reports/
+│
+├── reports/                       ← Optional custom reports
 │
 ├── config/
 │   └── checkstyle/
 │       └── google_checks.xml
 │
-├── target/
-│   ├── classes/
-│   ├── test-classes/
-│   ├── cucumber-report.html
-│   ├── cucumber-report.json
-│   ├── surefire-reports/
-│   └── generated-sources/
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml
+├── .github/workflows/
+│   └── ci.yml                     ← CI pipeline
 │
 ├── Dockerfile
 ├── docker-compose.yml
-├── .dockerignore
 ├── pom.xml
 └── README.md
 ```
@@ -106,9 +123,52 @@ restful-api-qa-items/
 - **JUnit 5 / JUnit Platform** – test runner
 - **Rest-Assured** – for REST API testing
 - **Jackson Databind** – for JSON serialization
-- **Cucumber PicoContainer** – for dependency injection in step definitions
+- **Spring Dependency Injection** – for dependency injection in step definitions
 
+## Spring Dependency Injection
+Introduced a dedicated config/ package for test configuration
+TestConfig defines Spring beans:
+ItemService
+ItemApi
+ApiTestContext
+CucumberSpringConfig integrates Cucumber with Spring Boot
+Step definitions now use constructor injection (no manual object creation)
 Dependencies are managed in `pom.xml`.
+
+## Contract Testing with Pact (V4)
+Added contract/ package for consumer-driven contract tests
+Uses Pact V4 with .usingLegacyDsl() for readable DSL
+Covers key interactions:
+Create item (POST)
+Get item (GET)
+
+Generated contracts are stored in: target/pacts/
+
+## Test Architecture
+
+Clear separation of concerns:
+
+client/ → low-level HTTP handling
+
+
+service/ → business logic layer
+
+builder/ → test data creation
+
+This keeps tests:
+
+reusable
+
+maintainable
+easy to extend
+
+## Multiple Testing Strategies
+| Type              | Location    | Purpose                       |
+| ----------------- | ----------- | ----------------------------- |
+| Cucumber (BDD)    | `steps/`    | End-to-end API scenarios      |
+| Contract Tests    | `contract/` | Consumer-provider validation  |
+| Schema Validation | `schemas/`  | Response structure validation |
+
 
 ## Run all tests
 
@@ -116,7 +176,19 @@ mvn clean test
 
 ## Run a specific feature
 
+
 mvn clean test -Dcucumber.features=src/test/resources/features/item_management.feature
+
+**This command now will include pact tests as cucumber uses the junit platform which runs all tests in the classpath, including contract tests.**
+
+To run a specific feature without running contract tests, you can use tags to exclude them. For example, if your contract tests are tagged with @contract, you can run:
+
+**mvn test -Dcucumber.filter.tags="@item-management" -Dgroups='!contract'**
+
+## Run a specific pact test
+To run a specific pact test, you can use the JUnit 5 tag associated with that test. For example, if your contract test is tagged with @contract, you can run:
+
+mvn test -Dgroups=contract
 
 ## Run Maven and override base.url
 

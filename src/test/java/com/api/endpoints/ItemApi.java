@@ -6,21 +6,37 @@ import com.api.utils.ConfigReader;
 import io.restassured.response.Response;
 
 public class ItemApi {
-  private static final String BASE_URL = ConfigReader.get("base.url");
 
-  public Response createItem(ItemRequest request) {
-    return RestClient.request().body(request).post(BASE_URL);
-  }
+    private final String baseUrl;
 
-  public Response getItem(String id) {
-    return RestClient.request().get(BASE_URL + "/" + id);
-  }
+    private static final String ITEMS_PATH = "/collections/products/objects";
 
-  public Response getAllItems() {
-    return RestClient.request().get(BASE_URL);
-  }
+    public ItemApi() {
+        this.baseUrl = ConfigReader.get("base.url");
+    }
 
-  public Response deleteItem(String id) {
-    return RestClient.request().delete(BASE_URL + "/" + id);
-  }
+    public ItemApi(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public Response createItem(ItemRequest request) {
+        return RestClient.request()
+                .body(request)
+                .post(baseUrl + ITEMS_PATH);
+    }
+
+    public Response getItem(String id) {
+        return RestClient.request()
+                .get(baseUrl + ITEMS_PATH + "/" + id);
+    }
+
+    public Response getAllItems() {
+        return RestClient.request()
+                .get(baseUrl + ITEMS_PATH);
+    }
+
+    public Response deleteItem(String id) {
+        return RestClient.request()
+                .delete(baseUrl + ITEMS_PATH + "/" + id);
+    }
 }
